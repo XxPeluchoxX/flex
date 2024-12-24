@@ -1,0 +1,182 @@
+\documentclass[12pt]{article}
+
+\input{./preambulo.tex}
+% Define a custom command for email addresses
+\newcommand{\email}[1]{\href{mailto:#1}{{{\color{blue}#1}}}}
+
+\fancyhead[L]{\helv \nouppercase{\leftmark}}
+\fancyhead[R]{\helv \nouppercase{\rightmark}}
+
+\title{\textbf{Modelos de Computación}}
+
+\date{}  % Fecha actual
+
+\begin{document}
+
+    % Crear la portada
+    \maketitle
+
+    % Subtítulo (puede usarse \Large para hacer el texto más grande)
+    \begin{center}
+        \LARGE \textit{Trabajo de Lex\\2024-2025}
+    \end{center}
+
+    \vspace{1cm}
+
+    \begin{center}
+        \large \today
+    \end{center}
+    
+    \vspace{8cm}
+
+    % Autores
+    \begin{center}
+        \textbf{José Juan Urrutia Milán} \\ 
+        \vspace{1em}  % Espacio entre autores
+        \textbf{Irina Kuzyshyn Basarab} \\ 
+    \end{center}
+
+    \newpage
+
+    % Inicio del contenido del documento
+    \section{Motivación}
+    En la gestión de cualquier organismo o empresa es necesaria la recopilación de datos de trabajadores, usuarios o clientes de la misma. Debida a la cantidad de datos que estas requieren, este procedimiento suele ser automático, para lo que se necesitan una serie de sistemas y algoritmos a desarrollar y mantener.\\
+
+    En esta práctica, supuesto que tenemos un programa de recopilación de datos tipo formulario (un documento donde los usuarios puedan escribir sus datos personales), crearemos un programa que tenga como objetivo obtener toda la información válida introducida por el usuario (en cualquier formato), para:
+    \begin{itemize}
+        \item Identificar el tipo de información: detectar si se trata de un nombre, de un número de teléfono, \ldots.
+        \item Poner la información en un formato estándar, con el objetivo de introducirla en una base de datos y que los datos introducidos por distintos usuarios estén en el mismo formato. 
+    \end{itemize}
+
+    \section{Desarrollo de la práctica}
+    \subsection{Nombres y Apellidos}
+    \begin{description}
+        \item [Nombre válido.]~\\
+            Consideraremos que un nombre es válido cuando contemos con una palabra formada por al menos dos cadenas de caracteres alfabéticos. De esta forma, no aceptamos que el nombre de una persona esté conformado por una única cadena alfabética.
+        \item [Formato estándar.]~\\
+            Dado un nombre válido, este estará conformado por al menos dos cadenas de caracteres separadas por un espacio. En función del número de cadenas de caracteres que tengamos, tendremos formas distintas de nombres:
+            \begin{itemize}
+                \item Si solo tenemos dos cadenas de caracteres, consideramos que la primera es el nombre de la persona y que la segunda es su único apellido.
+                \item Si tenemos más de dos cadenas de caracteres, consideramos que las dos últimas son sus apellidos y que el resto forman el nombre de la persona (que puede estar formado por tantas cadenas de caracteres como se desee).
+            \end{itemize}
+            Haremos una distinción especial para los \textit{nombres compuestos con partículas preposicionales}, como por ejemplo, ``María del Carmen Fernández Martín'', de forma que consideramos estas cinco cadenas como cuatro, por lo que tenemos a una persona cuyo primer nombre es ``María'' y segundo nombre es ``del Carmen''.\\
+
+            Finalmente, si el usuario introdujo un nombre que no tiene su primera letra en mayúscula o que tiene alguna letra que no corresponde a la primera de una cadena en mayúscula, lo modificaremos de forma que se quede la primera letra de cada cadena (salvo las preposicionales) en mayúscula y el resto de caracteres en minúscula.
+
+            \begin{ejemplo}
+                Mostramos un ejemplo de funcionamiento del programa con las siguientes cadenas de entrada:
+                \begin{minted}[numbers=none]{c++}
+                    > josé sáncHez de las nieves
+                    Nombre: José | Sánchez | de las Nieves
+                    > María   del carmen pilar lóPEZ
+                    Nombre: María | del Carmen | Pilar | López
+                \end{minted}
+            \end{ejemplo}
+    \end{description}
+    \subsection{Teléfonos}
+    \begin{description}
+        \item [Teléfono válido.]~\\
+            Consideramos que una palabra es un número de teléfono cuando:
+            \begin{itemize}
+                \item Bien está conformada por 9 caracteres numéricos que pueden estar separados por ``.'', ``-'' o un espacio en blanco.
+                \item Cuenta con un prefijo, es decir, un ``+'' seguido de una cadena numérica formada por 1, 2 o 3 caracteres (que pueden estar o no parentizados) seguido de un número válido (esto es, una palabra de la forma indicada en el punto superior).
+            \end{itemize}
+        \item [Formato estándar.]~\\
+            Dado un número de teléfono válido, eliminaremos todos los separadores que puedan aparecer en él, de forma que al final mostraremos su prefijo (si no se indicó ninguno, suponemos que es un número de España e indicamos el prefijo ``+34'') seguido del número en cuestión.
+            \begin{ejemplo}
+                Mostramos un ejemplo del funcionamiento del programa:
+                \begin{minted}[numbers=none]{c++}
+                    > 666 66 66 66
+                    Telefono: +34 | 666666666
+                    > + (128)   666-666-666
+                    Telefono: +128 | 666666666
+                \end{minted}
+            \end{ejemplo}
+    \end{description}
+    \subsection{DNIs y NIEs}
+    \begin{description}
+        \item [Cadenas válidas.]~\\
+            Una cadena se considerará un DNI o un NIE si:
+            \begin{itemize}
+                \item Un DNI si consta de 8 dígitos juntos (sin espacios entre ellos) seguido de una letra.
+                \item Un NIE si consta de una letra seguida de 7 dígitos juntos y de otra letra.
+            \end{itemize}
+        \item [Formato estándar.]~\\
+            Dada una cadena que puede ser un DNI o NIE válido, eliminaremos todos los espacios en blanco que aparezcan separando las letras de los números y convertiremos todas las letras que aparezcan en mayúscula.
+        \item [DNI o NIE válidos.]~\\
+            Una vez tengamos nuestra cadena en formato estándar, comprobaremos si efectivamente se trata de un DNI o NIE válido. Para ello:
+            \begin{itemize}
+                \item En el caso de los DNIs, consideramos el número formado por los 8 dígitos, calculamos su resto módulo 23 y consultamos la siguiente tabla para ver si la letra es correcta:
+                    \begin{table}[H]
+                    \centering
+                    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+                        \hline
+                        Resto & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11  \\
+                        \hline
+                        Letra & T & R & W & A & G & M & Y & F & P & D & X & B \\
+                        \hline
+                        \hline
+                        Resto & 12 & 13 & 14 & 15 & 16 & 17 & 18 & 19 & 20 & 21 & 22 & \\
+                        \hline
+                        Letra & N & J & Z & S & Q & V & H & L & C & K & E&  \\
+                        \hline
+                    \end{tabular}
+                    \end{table}
+                \item En el caso de los NIEs, sustituimos la primera letra por un número, tal y como indica la siguiente tabla:
+                    \begin{table}[H]
+                    \centering
+                    \begin{tabular}{|c|c|c|c|}
+                        \hline
+                        Letra & X & Y & Z \\
+                        \hline
+                        Número & 0 & 1 & 2 \\
+                        \hline
+                    \end{tabular}
+                    \end{table}
+                    En caso de que la primera letra no sea una de esas, el NIE no es válido. Una vez hecha la sustitución, hemos de comprobar que lo que nos queda es un DNI válido.
+            \end{itemize}
+            \begin{ejemplo}
+                Ejemplo de ejecución
+                \begin{minted}[numbers=none]{c++}
+                    > 00473914   E
+                    DNI: 00473914E
+                    > Z 9530626  Y
+                    NIE: Z9530626Y
+                    > 67861125 H
+                    > R0564785D
+                \end{minted}
+            \end{ejemplo}
+    \end{description}
+    \subsection{Correos electrónicos}
+    \begin{description}
+        \item [Correos válidos.]~\\
+            Una palabra será un correo válido cuando este conste de una cadena de caracteres alfanuméricos (admitiendo también ``\_'', aunque no como primer símbolo) seguida de una ``@'' y de al menos dos cadenas de caracteres separadas por un punto.
+        \item [Formato estándar.]~\\
+            Dada una cadena que consideramos un correo válido, la estandarizaremos simplemente pasando todos los caracteres alfabéticos a minúscula.
+            \begin{ejemplo}
+                Un ejemplo de ejecución:
+                \begin{minted}[escapeinside=\#\#, numbers=none]{c++}
+                    > USUARIO#@#correo.ugr.es
+                    Correo: usuario#@#correo.ugr.es
+                    > usuario_47#@#gmail.com
+                    Correo: usuario_47#@#gmail.com
+                \end{minted}
+            \end{ejemplo}
+    \end{description}
+    \subsection{Cuentas bancarias}
+    \begin{description}
+        \item [Cuentas válidas.]~\\
+        \item [Formato estándar.]~\\
+    \end{description}
+    \subsection{Fechas}
+    \begin{description}
+        \item [Teléfono válido.]~\\
+        \item [Formato estándar.]~\\
+    \end{description}
+
+    \newpage
+
+    \fancyhead[R]{\helv \nouppercase{\rightmark}}
+
+\end{document}
+

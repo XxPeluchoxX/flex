@@ -1,0 +1,87 @@
+# Operaciones básicas
+## for <ini>:<fin>                                  --> for(int i = ini; i < fin; i++)
+## for <ini1>;<fin1>...:<finm>                      --> for(int i = ini; i < fin1; i++) for(int j = ini; j < fin2; j++)
+## for <ini1>:...:<inin>;<fin1>                     --> for(int i = ini1; i < fin; i++) for(int j = ini2; j < fin; j++)
+## for <ini1>:...:<inim>;<fin1>...:<finm>           --> for(int i = ini1; i < fin1; i++) for(int j = ini2; j < fin2; j++)
+
+## max(<a>,<b>)                                         --> (a<b)?a:b;
+## min(<a>,<b>)                                         --> (a>b)?a:b;
+
+***
+
+     Que las directivas sean para datos numericos?
+
+# Operaciones sobre UNA estructura [] (componente a componente)
+## <nombre>, <tamaño> : <operacion> <output>                            (*) Caso especial: ... : cout  (sin output)
+
+    Donde <operacion> = max | min | <simbolo> | media | moda || cout (*) || sort | neg (negacion) | inv (inverso) | copia
+          <simbolo> = + | * 
+
+## <nombre>, <tamaño> : find (<condicion>) <output>
+    Devuelve el primer indice en el que se verifica condicion (si no hay ninguno, -1)
+
+## <nombre>, <tamaño> : is_sorted <output>
+    Devuelve (booleano) que indica si esta o no ordenado
+
+# Operaciones sobre conjunto de variables
+## <nombre1>, ..., <nombren> : <operacion> <output>
+
+    Todas las operaciones superiores.
+    Lo que haces es: declara double v = {nombre1, ..., nombren} y hace lo de arriba
+
+# Operaciones sobre UNA estructura []...[] (componente a componente)
+## <nombre>, <tamaño>,..., <tamaño> : <operacion> <output>              (*) Caso especial: ... : cout  (sin output)
+
+    Donde <operacion> = max | min | <simbolo> | media | moda || cout (*) || neg (negacion) | inv (inverso) | copia
+          <simbolo> = + | * 
+
+***
+
+# Operaciones sobre elementos tratados de forma matematica
+- sobre DOS estructura [] 
+## math <nombre1>, <nombre2> : <tamaño> : <operacion> <output>       (anteriormente declarado)
+
+    Donde <operacion> = + | - | * (prod escalar) | equals
+
+- sobre UNA estructura [][] 
+## math <nombre1> : <ancho>, <largo> : <operacion> <output>       (anteriormente declarado)
+
+    Donde <operacion> = inv (matriz inversa)
+
+- sobre DOS estructuras [][] 
+## math <nombre1>, <nombre2> : <dim1>, <dim2> : <operacion> <output>       (anteriormente declarado)
+
+    Donde <operacion> = + | - | equals
+
+- multiplicar DOS estructuras [][] 
+## math <nombre1>, <nombre2> : <dim1>, <dim2>, <dim3> : <operacion> <output>       (anteriormente declarado)
+
+    Donde <operacion> = * 
+
+- multiplicar [][] por []
+## math <matriz>; <vector> : <dim1>, <dim2> : <operacion> <output>
+
+    Donde <operacion> = *
+
+- sobre [][]...[]
+## exists/forall/1exists <nombre> (<condicion>) : <dim1>, ..., <dimn> : <output>
+
+    Busca si en nombre existe/todos los elementos cumplen condicion (en esta, sustituimos nombre por nombre[i]...[k]), output es booleano
+
+## sum/prod <nombre> : <var>=<ini>, <fin> : <expresion> <output>
+    Se sustituye por: for(var = ini; var <= fin; var++) output +/*= expresion
+
+## <nombre> in (<conjunto de cosas separado por coma>) : <output>
+    ## var in (valor1, valor2, valor3) ---> output = var == valor1 || var == valor2 || var == valor3;
+
+- sobre UNA estructura [] tratada como set
+## math <nombre1>, <nombre2> : <tam> : <operacion> <output>
+    
+    Donde <operacion> = union | intersect | difference | symetric_diff |
+
+- Sobre DOS estructuras (,) (pairs):
+## math (<a>,<b>), (<a>,<b>) : <operacion> <output>
+
+    Donde <operacion> = middle_point | distancia | vector (que los une) |
+
+***
