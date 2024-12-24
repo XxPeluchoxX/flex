@@ -1,25 +1,4 @@
-%{
-#include<iostream>
-using namespace std;
-
-void estandarizar(string txt);
-%}
-
-%option noyywrap
-
-DIG     [0-9]
-CAR     [a-zA-Z]
-CUENTA  {CAR}{2}" "*{DIG}{2}" "*({DIG}{4}" "*){5}
-
-%%
-
-{CUENTA}        {
-    estandarizar(yytext);
-}
-
-%%
-
-// Calcula el resto entre 97
+// Calcula el resto de num entre 97
 int mod97(string num){
     int resto = 0;
 
@@ -52,8 +31,9 @@ bool iban_correcto(string iban){
     return mod97(txt) == 1;
 }
 
-// Elimina espacios en blanco y cambia a mayuscula
-void estandarizar(string txt){
+// Imprime el IBAN, en caso de ser correcto
+void confirmar_cuenta(string txt){
+    // 1. Elimina los espacios y pasa los caracteres a mayuscula
     string iban = "                        ";
     const int NUM = 24;
     int contador = 0;
@@ -68,11 +48,8 @@ void estandarizar(string txt){
         }
     }
 
+    // 2. Imprime el IBAN, en caso de ser correcto
     if(iban_correcto(iban))
         cout << "IBAN: " << iban << endl;
 }
 
-int main(){
-    yylex();
-    return 0;
-}

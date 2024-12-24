@@ -1,25 +1,4 @@
-%{
-#include<iostream>
-using namespace std;
-
-void confirmar_telefono(string txt);
-%}
-
-%option noyywrap
-
-SEPARADOR   (\.|-|" ")
-PREFIJO     \+" "*\(?[0-9]{1,3}\)?
-NUMERO      [0-9]
-TELEFONO    {PREFIJO}?{SEPARADOR}?({NUMERO}{SEPARADOR}?){9}
-
-%%
-
-{TELEFONO} {
-    confirmar_telefono(yytext);
-}
-
-%%
-
+// Imprime el teléfono, en caso de ser válido
 void confirmar_telefono(string txt){
 
     // 1. Almacena los ultimos NUM digitos de txt en tlf
@@ -49,6 +28,7 @@ void confirmar_telefono(string txt){
         i--;
     }
 
+    // 3. Imprime el teléfono
     cout << "Telefono: ";
     if(hay_pref){
         cout << "+" + prefijo + " | ";
@@ -59,7 +39,3 @@ void confirmar_telefono(string txt){
     cout << tlf << endl;
 }
 
-int main(){
-    yylex();
-    return 0;
-}

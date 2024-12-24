@@ -67,9 +67,9 @@
                 Mostramos un ejemplo de funcionamiento del programa con las siguientes cadenas de entrada:
                 \begin{minted}[numbers=none]{c++}
                     > josé sáncHez de las nieves
-                    Nombre: José | Sánchez | de las Nieves
+                    Nombre: José || Sánchez | de las Nieves
                     > María   del carmen pilar lóPEZ
-                    Nombre: María | del Carmen | Pilar | López
+                    Nombre: María | del Carmen || Pilar | López
                 \end{minted}
             \end{ejemplo}
     \end{description}
@@ -150,7 +150,7 @@
     \subsection{Correos electrónicos}
     \begin{description}
         \item [Correos válidos.]~\\
-            Una palabra será un correo válido cuando este conste de una cadena de caracteres alfanuméricos (admitiendo también ``\_'', aunque no como primer símbolo) seguida de una ``@'' y de al menos dos cadenas de caracteres separadas por un punto.
+            Una palabra será un correo válido cuando este conste de una cadena de caracteres alfanuméricos (admitiendo también ``\_''), siendo el primer carácter de dicha cadena una letra; seguida de una ``@'' y de al menos dos cadenas de caracteres separadas por un punto.
         \item [Formato estándar.]~\\
             Dada una cadena que consideramos un correo válido, la estandarizaremos simplemente pasando todos los caracteres alfabéticos a minúscula.
             \begin{ejemplo}
@@ -165,12 +165,32 @@
     \end{description}
     \subsection{Cuentas bancarias}
     \begin{description}
-        \item [Cuentas válidas.]~\\
+        \item [Cadenas válidas.]~\\
+            Diremos que una palabra será una cuenta bancaria válida si está en el formato IBAN para cuentas españolas, que consta de 24 caracteres: 2 letras (``ES'') seguidas de 22 dígitos. Admitiremos también dichas letas en minúscula, espacios entre las letras y los dígitos y entre cada grupo de dígitos, tal y como mostramos debajo:
+            \begin{equation*}
+                ES\ XX\ XXXX\ XXXX\ XXXX\ XXXX\ XXXX
+            \end{equation*}
+            Admitimos que el usuario no introduzca alguno de dichos espacios.
         \item [Formato estándar.]~\\
+            Dada una cuenta bancaria válida, eliminaremos todos los espacios en blanco y convertiremos todos los caracteres a mayúscula.
+        \item [Cuentas válidas.]~\\
+            Una cuenta bancaria es válida si siendo una cadena para cuenta válida, ponemos los 4 primeros caracteres (las 2 letras y los 2 dígitos) al final de la palabra, quedando:
+            \begin{equation*}
+                XXXXXXXXXXXXXXXXXXXXESXX
+            \end{equation*}
+            Transformamos las letras a números (de forma que a ``A'' le corresponde el 10, a la ``B'' el 11, \ldots) y el resto de dividir el número que nos queda entre 97 es 1.
+            \begin{ejemplo}
+                Mostramos ahora un ejemplo de ejecución, donde vemos que el programa no nos da la salida por ser cuentas no válidas (su resto entre 97 no es 1):
+                \begin{minted}[numbers=none]{c++}
+                    > ES91 2100 0418 4502 0005 1332
+                    IBAN: ES9121000418450200051332
+                    > ES92 2100 0418 4502 0005 1332
+                \end{minted}
+            \end{ejemplo}
     \end{description}
     \subsection{Fechas}
     \begin{description}
-        \item [Teléfono válido.]~\\
+        \item [Cadenas válidas.]~\\
         \item [Formato estándar.]~\\
     \end{description}
 

@@ -1,25 +1,6 @@
-%{
-#include<iostream>
-using namespace std;
-
-void confirmar_dninie(string txt);
-%}
-
-%option noyywrap
-
-DIGITO      [0-9]
-LETRA       [a-zA-Z]
-DNI_NIE     ({DIGITO}|{LETRA}" "*){DIGITO}{7}" "*{LETRA}
-
-%%
-
-{DNI_NIE}       {
-    confirmar_dninie(yytext);
-}
-
-%%
-
 const string LETRAS = "TRWAGMYFPDXBNJZSQVHLCKE";
+
+// Devuelve la letra asociada a un número del DNI
 inline char obtenerLetraDNI(long dni){
     return LETRAS[dni % 23];
 }
@@ -32,23 +13,20 @@ bool correcto_dni(string dni){
 
 // Comprueba si un NIE es correcto
 bool correcto_nie(string nie){
-    if (nie[0] != 'X' && nie[0] != 'Y' && nie[0] != 'Z')
-        return false;
-
     switch(nie[0]){
         case 'X':   nie[0] = '0'; break;
         case 'Y':   nie[0] = '1'; break;
         case 'Z':   nie[0] = '2'; break;
+        default: return false; break;
     }
 
     return correcto_dni(nie);
 }
 
-//
-
+// Imprime el DNI o NIE, en caso de ser correcto
 void confirmar_dninie(string txt){
 
-    // Elimina espacios y convierte letras a mayuscula
+    // 1. Elimina espacios y convierte letras a mayuscula
     const int NUM = 9;
     int contador = 0;
     int i = 0;
@@ -66,7 +44,7 @@ void confirmar_dninie(string txt){
         i++;
     }
 
-    // Comprueba si es correcto y si lo es lo imprime
+    // 2. Comprueba si es correcto y si lo es lo imprime
     if(isalpha(dni_nie[0])){
         if(correcto_nie(dni_nie))
             cout << "NIE: " << dni_nie << endl;
@@ -76,7 +54,3 @@ void confirmar_dninie(string txt){
     }
 }
 
-int main(){
-    yylex();
-    return 0;
-}
