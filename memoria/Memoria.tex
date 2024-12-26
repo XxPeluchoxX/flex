@@ -49,6 +49,32 @@
     \end{itemize}
 
     \section{Desarrollo de la práctica}
+    En esta práctica los datos que reconoceremos serán los siguientes:
+    \begin{itemize}
+        \item Nombres y Apellidos.
+        \item Teléfonos.
+        \item DNIs y NIEs.
+        \item Correos electrónicos.
+        \item Cuentas bancarias.
+        \item Fechas.
+    \end{itemize}
+
+    El funcionamiento del programa es simple: se van introduciendo datos por teclado, y los datos que vaya reconociendo como alguno de los arriba nombrados, se comprobará que sean válidos en algunos casos, y se estandarizarán mostrándolo por pantalla indicando el dato que es. Veamos un sencillo ejemplo: 
+    \begin{ejemplo}
+        Veamos un sencillo ejemplo:
+        \begin{minted}[numbers=none]{c++}
+            > 12345678z
+            DNI: 12345678Z
+            > a
+            > +34123456789
+            Teléfono: +34 | 123456789
+        \end{minted}
+        Como vemos cuando lee algo que no encaja en ninguno de los patrones buscados simplemente lo ignora. 
+    \end{ejemplo}
+
+    Pasemos ahora a explicar los formatos que aceptamos como válidos, pues aunque la idea sea aceptar formatos variados y estandarizarlos, hay ciertas restricciones que vamos a poner; y los formatos estándar para cada tipo de dato.
+
+
     \subsection{Nombres y Apellidos}
     \begin{description}
         \item [Nombre válido.]~\\
@@ -190,8 +216,37 @@
     \end{description}
     \subsection{Fechas}
     \begin{description}
-        \item [Cadenas válidas.]~\\
+        \item [Fechas válidas.]~\\
+            Dado que las fechas se pueden introducir de un montón de formas, en esta práctica vamos a aceptar algunos de ellos que pasaremos a explicar a continuación. Algo que afecta a todas ellas es que el rango de años que vamos a tomar como válidos es desde 1800 hasta 2200.
+            \begin{itemize}
+                \item Lo que llamamos fecha simple, púramente numérica. Entre los números que representan el día, mes y año puede haber más de un separador (. / - o espacio) o un de o del. Además aceptamos varios órdenes distintos:
+                    \begin{itemize}
+                        \item DD/MM/YYYY (por defecto)
+                        \item MM/DD/YYYY
+                        \item YYYY/MM/DD
+                        \item DD/MM/YY (por defecto)
+                        \item MM/DD/YY
+                    \end{itemize}
+                    En primer lugar, a lo que nos referimos como por defecto, es que si entre las dos primeras (o las dos últimas) valieran las dos se toma la primera (y la penúltima). Por otro lado, en los casos YY si 20YY es menor o igual al año actual se pone 20YY, en otro caso se pone 19YY. 
+
+                \item La fecha con el mes escrito, en formato larto o corto (las tres primeras letras). En concreto las cadenas que aceptaremos son de la forma: dia + separadores + mes + separadores + año. Con separadores nos referimos a lo mismo que en la fecha simple.
+                \item El último caso que vamos a tratar es que podamos ponerle el día de la semana por delante de los otros dos casos, seguido de una posible , y de separadores (. / - o espacio), al menos 1.  
+            \end{itemize}
         \item [Formato estándar.]~\\
+            Dada una fecha válida, el formato estándar que hemos escogido es: DD/MM/YYYY\@.
+            \begin{ejemplo}
+                Un ejemplo de ejecución:
+                \begin{minted}[escapeinside=\#\#, numbers=none]{c++}
+                    > 23--5   2003
+                    Fecha: 23/05/2003
+                    > 12/ene  del 23
+                    Fecha: 12/01/2023
+                    > lunes,   15 octubre---73
+                    Fecha: 15/10/1973
+                \end{minted}
+
+            \end{ejemplo}
+            
     \end{description}
 
     \newpage
