@@ -15,6 +15,7 @@ const int limsup = 2200;
 string dia_semana, fecha_simple, dia, mes, anio;
 
 void confirmarFecha();
+void limpiarCamposGlobales();
 %}
 
 %option noyywrap
@@ -74,6 +75,7 @@ Fecha_Dia_Semana    {Dia},?{SEPARADOR}+{FECHA_SIMPLE}
 
 <ANIO_SEPARADOR>{DIGITO}{4}     { BEGIN(INITIAL); anio = yytext; confirmarFecha(); }
 
+<INITIAL,DIA,MES,ANIO,DIA_SEPARADOR,MES_SEPARADOR,ANIO_SEPARADOR>\n     { BEGIN(INITIAL); limpiarCamposGlobales(); }
 
 
 
@@ -294,6 +296,11 @@ bool procesaFechaMes(int &Dia, int &Mes, int &Anio){
 }
 
 
+// Funcion que deja los campos globales vacios
+void limpiarCamposGlobales(){
+    dia_semana = fecha_simple = dia = mes = anio = "";
+}
+
 
 // Funcion que procesa la fecha la forma en la que este 
 // e imprime por pantalla si es correcta
@@ -329,5 +336,5 @@ void confirmarFecha(){
         cout << "Fecha: " << cad << endl;
     }
     
-    dia_semana = fecha_simple = dia = mes = anio = "";
+    limpiarCamposGlobales();
 }
