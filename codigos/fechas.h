@@ -1,11 +1,3 @@
-%{
-#include<iostream>
-#include<string>
-#include<sstream>
-#include<chrono>
-
-using namespace std;
-
 // Variables globales
 const int dias_meses[13] = {-1, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 const int centena_actual = 2000;
@@ -14,79 +6,6 @@ const int limsup = 2200;
 
 string dia_semana, fecha_simple, dia, mes, anio;
 
-void confirmarFecha();
-void limpiarCamposGlobales();
-%}
-
-%option noyywrap
-
-SEPARADOR           [-\/ \.]
-PARTICULAS          " "+del?" "+
-SEPARADOR_EXT       {SEPARADOR}|{PARTICULAS}
-DIGITO              [0-9]
-
-
-FECHA_SIMPLE        {DIGITO}{1,4}{SEPARADOR_EXT}+{DIGITO}{1,4}{SEPARADOR_EXT}+{DIGITO}{1,4}
-
-
-meses               ene|feb|mar|abr|may|jun|jul|ago|sep|oct|nov|dic
-MESES               ENE|FEB|MAR|ABR|MAY|JUN|JUL|AGO|SEP|OCT|NOV|DIC
-Meses               Ene|Feb|Mar|Abr|May|Jun|Jul|Ago|Sep|Oct|Nov|Dic
-Nombres_Meses       Enero|Febrero|Marzo|Abril|Mayo|Junio|Julio|Agosto|Septiembre|Octubre|Noviembre|Diciembre
-Nombres_meses       enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre
-Nombres_MESES       ENERO|FEBRERO|MARZO|ABRIL|MAYO|JUNIO|JULIO|AGOSTO|SEPTIEMBRE|OCTUBRE|NOVIEMBRE|DICIEMBRE
-MES                 {meses}|{Meses}|{MESES}
-Nombre_Mes          {Nombres_Meses}|{Nombres_meses}|{Nombres_MESES}
-
-
-FECHA_MES           {DIGITO}{2}({SEPARADOR}+|{PARTICULAS})({MES}|{Nombre_Mes})({SEPARADOR}+|{PARTICULAS}){DIGITO}{4}
-
-
-Dias                Lunes|Martes|Miercoles|Miércoles|Jueves|Viernes|Sábado|Sabado|Domingo
-dias                lunes|martes|miercoles|miércoles|jueves|viernes|sábado|sabado|domingo
-D                   [LMXJVSDlmxjvsd]
-Dia                 {Dias}|{dias}|{D}
-
-
-Fecha_Completa      {Dia},?{SEPARADOR}+{FECHA_MES}
-
-Fecha_Dia_Semana    {Dia},?{SEPARADOR}+{FECHA_SIMPLE}
-
-%x DIA MES ANIO DIA_SEPARADOR MES_SEPARADOR ANIO_SEPARADOR
-%%
-
-{Dia}   { BEGIN(DIA); dia_semana = yytext; }
-
-{FECHA_SIMPLE}  { BEGIN(INITIAL); fecha_simple = yytext; confirmarFecha(); }
-
-{DIGITO}{2}     { BEGIN(MES); dia = yytext; }
-
-<DIA>,?{SEPARADOR}+     { BEGIN(DIA_SEPARADOR); }
-
-<DIA_SEPARADOR>{FECHA_SIMPLE}     { BEGIN(INITIAL); fecha_simple = yytext; confirmarFecha(); }
-
-<DIA_SEPARADOR>{DIGITO}{1,2}    { BEGIN(MES); dia = yytext; }
-
-<MES>{SEPARADOR}+|{PARTICULAS}  { BEGIN(MES_SEPARADOR); }
-
-<MES_SEPARADOR>{MES}|{Nombre_Mes}   { BEGIN(ANIO); mes = yytext; }
-
-<ANIO>{SEPARADOR}+|{PARTICULAS}     { BEGIN(ANIO_SEPARADOR); }
-
-<ANIO_SEPARADOR>{DIGITO}{4}     { BEGIN(INITIAL); anio = yytext; confirmarFecha(); }
-
-<INITIAL,DIA,MES,ANIO,DIA_SEPARADOR,MES_SEPARADOR,ANIO_SEPARADOR>\n     { BEGIN(INITIAL); limpiarCamposGlobales(); }
-
-
-
-%%
-
-
-int main(){
-    cout << "Introduce una fecha" << endl;
-    yylex();
-    return 0;
-}
 
 // Funcion para comprobar si un anio es bisiesto
 bool esBisiesto(int anio){
@@ -307,7 +226,7 @@ void limpiarCamposGlobales(){
 
 // Funcion que procesa la fecha la forma en la que este 
 // e imprime por pantalla si es correcta
-void confirmarFecha(){
+void confirmar_fecha(){
     int Dia, Mes, Anio;
     
     bool fecha_correcta;
