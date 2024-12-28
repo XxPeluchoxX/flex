@@ -75,14 +75,13 @@ Fecha_Dia_Semana    {Dia},?{SEPARADOR}+{FECHA_SIMPLE}
 
 {Dia}   { BEGIN(DIA); dia_semana = yytext; }
 
-({NOMBRE}|{NOM_COMPUESTO})" "+   {
+" "+({NOMBRE}|{NOM_COMPUESTO})   {
+    anadir_nombre(yytext);
+}
+^({NOMBRE}|{NOM_COMPUESTO})   {
     anadir_nombre(yytext);
 }
 
-({NOMBRE}|{NOM_COMPUESTO})" "*\n   {
-    anadir_nombre(yytext);
-    confirmar_nombre();
-}
 
 {TELEFONO} {
     confirmar_telefono(yytext);
