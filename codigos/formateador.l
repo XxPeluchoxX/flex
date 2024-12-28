@@ -69,46 +69,52 @@ Dia                 {Dias}|{dias}|{D}
 Fecha_Completa      {Dia},?{SEPARADOR}+{FECHA_MES}
 Fecha_Dia_Semana    {Dia},?{SEPARADOR}+{FECHA_SIMPLE}
 
-%x DIA MES ANIO DIA_SEPARADOR MES_SEPARADOR ANIO_SEPARADOR
+%x DIA MES ANIO DIA_SEPARADOR MES_SEPARADOR ANIO_SEPARADOR NOMBRE
 
 %%
 
-{Dia}   { BEGIN(DIA); dia_semana = yytext; }
+^" "*{Dia}   { BEGIN(DIA); dia_semana = yytext; }
 
-" "+({NOMBRE}|{NOM_COMPUESTO})   {
+<NOMBRE>" "+({NOMBRE}|{NOM_COMPUESTO})   {
     anadir_nombre(yytext);
 }
-^({NOMBRE}|{NOM_COMPUESTO})   {
+^" "*({NOMBRE}|{NOM_COMPUESTO})   {
+    BEGIN(NOMBRE);
     anadir_nombre(yytext);
 }
+<NOMBRE>" "*\n  {
+    confirmar_nombre();
+}
+
+<NOMBRE>.   { longitud = 0; buffer.clear(); BEGIN(INITIAL); }
 
 
-{TELEFONO} {
+^" "*{TELEFONO}" "*$ {
     confirmar_telefono(yytext);
 }
 
-{DNI_NIE}  {
+^" "*{DNI_NIE}" "*$  {
     confirmar_dninie(yytext);
 }
 
-{CORREO}   {
+^" "*{CORREO}" "*$   {
     confirmar_correo(yytext);
 }
 
-{CUENTA}   {
+^" "*{CUENTA}" "*$   {
     confirmar_cuenta(yytext);
 }
 
 
 
 
-{FECHA_SIMPLE}  { BEGIN(INITIAL); fecha_simple = yytext; confirmar_fecha(); }
+^" "*{FECHA_SIMPLE}" "*$  { BEGIN(INITIAL); fecha_simple = yytext; confirmar_fecha(); }
 
-{NUMERO}{1,2}     { BEGIN(MES); dia = yytext; }
+^" "*{NUMERO}{1,2}     { BEGIN(MES); dia = yytext; }
 
 <DIA>,?{SEPARADOR}+     { BEGIN(DIA_SEPARADOR); }
 
-<DIA_SEPARADOR>{FECHA_SIMPLE}     { BEGIN(INITIAL); fecha_simple = yytext; confirmar_fecha(); }
+<DIA_SEPARADOR>{FECHA_SIMPLE}" "*$     { BEGIN(INITIAL); fecha_simple = yytext; confirmar_fecha(); }
 
 <DIA_SEPARADOR>{NUMERO}{1,2}    { BEGIN(MES); dia = yytext; }
 
@@ -118,13 +124,13 @@ Fecha_Dia_Semana    {Dia},?{SEPARADOR}+{FECHA_SIMPLE}
 
 <ANIO>{SEPARADOR}+|{PARTICULAS}     { BEGIN(ANIO_SEPARADOR); }
 
-<ANIO_SEPARADOR>{NUMERO}{1,4}     { BEGIN(INITIAL); anio = yytext; confirmar_fecha(); }
+<ANIO_SEPARADOR>{NUMERO}{1,4}" "*$     { BEGIN(INITIAL); anio = yytext; confirmar_fecha(); }
 
 <INITIAL,DIA,MES,ANIO,DIA_SEPARADOR,MES_SEPARADOR,ANIO_SEPARADOR>\n     { BEGIN(INITIAL); limpiarCamposGlobales(); confirmar_nombre(); }
 
 
 
-<INITIAL,DIA,MES,ANIO,DIA_SEPARADOR,MES_SEPARADOR,ANIO_SEPARADOR>.   { BEGIN(INITIAL); longitud = 0; buffer.clear(); }
+<INITIAL,DIA,MES,ANIO,DIA_SEPARADOR,MES_SEPARADOR,ANIO_SEPARADOR>.   {  }
 
 %%
 
