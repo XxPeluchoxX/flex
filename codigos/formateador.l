@@ -25,7 +25,7 @@ NUM_LET         {NUMERO}|{LETRA}
 SEPARADOR       (\.|-|" "|\/)
 
 /* Nombres */
-ARTICULO        (del?|los?|las?|el|todos)
+ARTICULO        (del?|los?|las?|el|todos|DEL?|LOS?|LAS?|EL|TODOS)
 NOMBRE          [a-zA-ZáéíóúñÁÉÍÓÚÑ]+
 NOM_COMPUESTO   ({ARTICULO}" "+({ARTICULO}" "+)*{NOMBRE})
 
