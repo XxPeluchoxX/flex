@@ -75,18 +75,25 @@ Fecha_Dia_Semana    {Dia},?{SEPARADOR}+{FECHA_SIMPLE}
 
 ^" "*{Dia}   { BEGIN(DIA); dia_semana = yytext; }
 
-<NOMBRE>" "+({NOMBRE}|{NOM_COMPUESTO})   {
-    anadir_nombre(yytext);
-}
 ^" "*({NOMBRE}|{NOM_COMPUESTO})   {
     BEGIN(NOMBRE);
     anadir_nombre(yytext);
 }
-<NOMBRE>" "*\n  {
-    confirmar_nombre();
+
+<NOMBRE>" "+({NOMBRE}|{NOM_COMPUESTO})   {
+    anadir_nombre(yytext);
 }
 
-<NOMBRE>.   { longitud = 0; buffer.clear(); BEGIN(INITIAL); }
+<NOMBRE>" "*\n  {
+    confirmar_nombre();
+    BEGIN(INITIAL);
+}
+
+<NOMBRE>.   { 
+    longitud = 0; 
+    buffer.clear(); 
+    BEGIN(INITIAL); 
+}
 
 
 ^" "*{TELEFONO}" "*$ {
@@ -107,30 +114,60 @@ Fecha_Dia_Semana    {Dia},?{SEPARADOR}+{FECHA_SIMPLE}
 
 
 
+^" "*{FECHA_SIMPLE}" "*$  { 
+    BEGIN(INITIAL); 
+    fecha_simple = yytext; 
+    confirmar_fecha(); 
+}
 
-^" "*{FECHA_SIMPLE}" "*$  { BEGIN(INITIAL); fecha_simple = yytext; confirmar_fecha(); }
+^" "*{NUMERO}{1,2}     { 
+    BEGIN(MES); 
+    dia = yytext; 
+}
 
-^" "*{NUMERO}{1,2}     { BEGIN(MES); dia = yytext; }
+<DIA>,?{SEPARADOR}+     { 
+    BEGIN(DIA_SEPARADOR); 
+}
 
-<DIA>,?{SEPARADOR}+     { BEGIN(DIA_SEPARADOR); }
+<DIA_SEPARADOR>{FECHA_SIMPLE}" "*$     { 
+    BEGIN(INITIAL); 
+    fecha_simple = yytext; 
+    confirmar_fecha(); 
+}
 
-<DIA_SEPARADOR>{FECHA_SIMPLE}" "*$     { BEGIN(INITIAL); fecha_simple = yytext; confirmar_fecha(); }
+<DIA_SEPARADOR>{NUMERO}{1,2}    { 
+    BEGIN(MES); 
+    dia = yytext; 
+}
 
-<DIA_SEPARADOR>{NUMERO}{1,2}    { BEGIN(MES); dia = yytext; }
+<MES>{SEPARADOR}+|{PARTICULAS}  { 
+    BEGIN(MES_SEPARADOR); 
+}
 
-<MES>{SEPARADOR}+|{PARTICULAS}  { BEGIN(MES_SEPARADOR); }
+<MES_SEPARADOR>{MES}|{Nombre_Mes}   { 
+    BEGIN(ANIO); 
+    mes = yytext; 
+}
 
-<MES_SEPARADOR>{MES}|{Nombre_Mes}   { BEGIN(ANIO); mes = yytext; }
+<ANIO>{SEPARADOR}+|{PARTICULAS}     { 
+    BEGIN(ANIO_SEPARADOR); 
+}
 
-<ANIO>{SEPARADOR}+|{PARTICULAS}     { BEGIN(ANIO_SEPARADOR); }
+<ANIO_SEPARADOR>{NUMERO}{1,4}" "*$     { 
+    BEGIN(INITIAL); 
+    anio = yytext; 
+    confirmar_fecha(); 
+}
 
-<ANIO_SEPARADOR>{NUMERO}{1,4}" "*$     { BEGIN(INITIAL); anio = yytext; confirmar_fecha(); }
+<INITIAL,DIA,MES,ANIO,DIA_SEPARADOR,MES_SEPARADOR,ANIO_SEPARADOR>\n     { 
+    BEGIN(INITIAL); 
+    limpiarCamposGlobales(); 
+    confirmar_nombre(); 
+}
 
-<INITIAL,DIA,MES,ANIO,DIA_SEPARADOR,MES_SEPARADOR,ANIO_SEPARADOR>\n     { BEGIN(INITIAL); limpiarCamposGlobales(); confirmar_nombre(); }
 
 
-
-<INITIAL,DIA,MES,ANIO,DIA_SEPARADOR,MES_SEPARADOR,ANIO_SEPARADOR>.   {  }
+<INITIAL,DIA,MES,ANIO,DIA_SEPARADOR,MES_SEPARADOR,ANIO_SEPARADOR>.   { /* Lo ignora */ }
 
 %%
 
