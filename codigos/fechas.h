@@ -82,6 +82,20 @@ int conversor_mes_numero(string mes){
     return -1;
 }
 
+// Funcion que devuelve el anio completo si esta acortado
+int anioCompleto(int num){
+    int Anio;
+    auto now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    // Dos ultima cifras del anio actual
+    int anio_actual = (localtime(&now)->tm_year + 1900) % 100;
+    if (anio_actual < num){
+        Anio = centena_actual - 100 + num;
+    }else {
+        Anio = centena_actual + num;
+    }
+    return Anio;
+}
+
 // Funcion que dada una fecha simple comprueba si es correcta o no
 /* Se permiten los siguientes formatos
     DD-MM-YYYY Este por defecto si hay confusion
@@ -98,15 +112,9 @@ int conversor_mes_numero(string mes){
 */ 
 bool fecha_simple_ok(int num1, int num2, int num3, int &Dia, int &Mes, int &Anio){
     if (num1 < 100 && num2 < 100 && num3 < 100){
-        auto now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-        int anio_actual = (localtime(&now)->tm_year + 1900) % 100;
-        if (anio_actual < num3){
-            Anio = centena_actual - 100 + num3;
-        }else {
-            Anio = centena_actual + num3;
-        }
+        Anio = anioCompleto(num3);
     }else { 
-        if (num1 >= 1800 && num1 <= 2200){ // Caso que se toma aparte
+        if (num1 >= liminf && num1 <= limsup){ // Caso que se toma aparte
             Anio = num1;
             if (num2 > 12 || num2 <= 0){
                 return false;
@@ -201,6 +209,11 @@ bool procesaFechaSimple(int &Dia, int &Mes, int &Anio){
 bool procesaFechaMes(int &Dia, int &Mes, int &Anio){
     Dia = stoi(dia);
     Anio = stoi(anio);
+
+    // Si anio acortado
+    if (Anio < 100){
+        Anio = anioCompleto(Anio);
+    }
 
     Mes = conversor_mes_numero(mes);
 

@@ -100,7 +100,7 @@ Fecha_Dia_Semana    {Dia},?{SEPARADOR}+{FECHA_SIMPLE}
 
 {FECHA_SIMPLE}  { BEGIN(INITIAL); fecha_simple = yytext; confirmar_fecha(); }
 
-{NUMERO}{2}     { BEGIN(MES); dia = yytext; }
+{NUMERO}{1,2}     { BEGIN(MES); dia = yytext; }
 
 <DIA>,?{SEPARADOR}+     { BEGIN(DIA_SEPARADOR); }
 
@@ -114,13 +114,13 @@ Fecha_Dia_Semana    {Dia},?{SEPARADOR}+{FECHA_SIMPLE}
 
 <ANIO>{SEPARADOR}+|{PARTICULAS}     { BEGIN(ANIO_SEPARADOR); }
 
-<ANIO_SEPARADOR>{NUMERO}{4}     { BEGIN(INITIAL); anio = yytext; confirmar_fecha(); }
+<ANIO_SEPARADOR>{NUMERO}{1,4}     { BEGIN(INITIAL); anio = yytext; confirmar_fecha(); }
 
 <INITIAL,DIA,MES,ANIO,DIA_SEPARADOR,MES_SEPARADOR,ANIO_SEPARADOR>\n     { BEGIN(INITIAL); limpiarCamposGlobales(); confirmar_nombre(); }
 
 
 
-.   {/* Ignora cualquier caracter no reconocido */}
+<INITIAL,DIA,MES,ANIO,DIA_SEPARADOR,MES_SEPARADOR,ANIO_SEPARADOR>.   { BEGIN(INITIAL); longitud = 0; buffer.clear(); }
 
 %%
 

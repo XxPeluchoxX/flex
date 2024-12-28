@@ -236,7 +236,7 @@
         \item [Fechas válidas.]~\\
             Dado que las fechas se pueden introducir de un montón de formas, en esta práctica vamos a aceptar algunos de ellos que pasaremos a explicar a continuación. Algo que afecta a todas ellas es que el rango de años que vamos a tomar como válidos es desde 1800 hasta 2200.
             \begin{itemize}
-                \item Lo que llamamos fecha simple, púramente numérica. Entre los números que representan el día, mes y año puede haber más de un separador (. / - o espacio) o un de o del. Además aceptamos varios órdenes distintos:
+                \item Lo que llamamos fecha simple, púramente numérica. Entre los números que representan el día, mes y año puede haber más de un separador (``. / -'' o espacio) o un de o del. Además aceptamos varios órdenes distintos:
                     \begin{itemize}
                         \item DD/MM/YYYY (por defecto)
                         \item MM/DD/YYYY
@@ -246,8 +246,8 @@
                     \end{itemize}
                     En primer lugar, a lo que nos referimos como por defecto, es que si entre las dos primeras (o las dos últimas) valieran las dos se toma la primera (y la penúltima). Por otro lado, en los casos YY si 20YY es menor o igual al año actual se pone 20YY, en otro caso se pone 19YY. 
 
-                \item La fecha con el mes escrito, en formato larto o corto (las tres primeras letras). En concreto las cadenas que aceptaremos son de la forma: dia + separadores + mes + separadores + año. Con separadores nos referimos a lo mismo que en la fecha simple.
-                \item El último caso que vamos a tratar es que podamos ponerle el día de la semana por delante de los otros dos casos, seguido de una posible , y de separadores (. / - o espacio), al menos 1.  
+                \item La fecha con el mes escrito, en formato larto (ej: febrero, Febrero) o corto (ej: Feb, FEB, feb). En concreto las cadenas que aceptaremos son de la forma: dia + separadores + mes + separadores + año. Con separadores nos referimos a lo mismo que en la fecha simple. También se acepta el año acortado y se siguen las mismas reglas que antes.
+                \item El último caso que vamos a tratar es que podamos ponerle el día de la semana (ej: Miercoles, Miércoles, miercoles, miércoles, x, X) por delante de los otros dos casos, seguido de una posible ``,'' y de separadores (``. / -'' o espacio), al menos 1. Hay que destacar que el programa comprueba que el día de la semana introducido coincide con el día correspondiente a la fecha introducida, sino se descarta. 
             \end{itemize}
             El diagrama de la Figura~\ref{fig:diagrama} representa cómo hemos conseguido que el programa identifique formatos de fechas tan variados.
             \begin{figure}[H]
@@ -277,6 +277,14 @@
                 \caption{Diagrama del reconocedor de fechas.}
                 \label{fig:diagrama}
             \end{figure}
+            \begin{itemize}
+                \item El estado $q_0$ simboliza el estado inicial. 
+                \item Los estados finales indican que ya se ha leído una fecha válida y se llama a una función que comprueba que la fecha es correcta e imprime la fecha, si es correcta, en el formato estándar que más tarde detallaremos.
+                \item Las transiciones indican qué se lee (y guarda en unas variables que luego usaremos) para cambiar a otro estado, en el que se espera que se lean otras cosas. 
+                \item Tanto llegar a un estado final, como leer un salto de línea nos sitúa de nuevo en el estado inicial.
+                \item Las transiciones de los separadores, como es evidente, no guardan nada, simplemente cambian de estado.
+            \end{itemize}
+
         \item [Formato estándar.]~\\
             Dada una fecha válida, el formato estándar que hemos escogido es: DD/MM/YYYY\@.
             \begin{ejemplo}
@@ -294,9 +302,16 @@
             
     \end{description}
 
+    \begin{observacion}
+        Cabe destacar que hemos tenido que tener en cuenta algunas prioridades. Por ejemplo cadenas como \verb|999 999 999| son claramente un teléfono pero también puede reconocerse como fecha, que en ningún caso sería válida, tomemos la combinación de espacios que tomemos. Por otro lado tenemos que tener en cuenta que los días de la semana deben reconocerse antes que los nombres también. 
+    \end{observacion}
+    
+
+
     \newpage
 
     \fancyhead[R]{\helv \nouppercase{\rightmark}}
 
 \end{document}
+
 
