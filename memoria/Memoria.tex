@@ -4,6 +4,23 @@
 % Define a custom command for email addresses
 \newcommand{\email}[1]{\href{mailto:#1}{{{\color{blue}#1}}}}
 
+% Para poder incluir árboles
+\usepackage{forest}
+\usepackage{booktabs}
+
+% Para poder añadir autómatas
+% https://www3.nd.edu/~kogge/courses/cse30151-fa17/Public/other/tikz_tutorial.pdf
+\usetikzlibrary{automata} %, positioning, arrows}
+\tikzset{
+    -Stealth,
+    node distance=3cm, % specifies the minimum distance between two nodes. Change if necessary.
+    every state/.style={thick, fill=gray!10, shape=ellipse}, % sets the properties for each ’state’ node
+    initial text=$ $, % sets the text that appears on the start arrow
+    % Un tipo de nodo, que es error, que lo pone rojo
+    error/.style={thick, fill=red!20},
+}
+
+
 \fancyhead[L]{\helv \nouppercase{\leftmark}}
 \fancyhead[R]{\helv \nouppercase{\rightmark}}
 
@@ -232,6 +249,34 @@
                 \item La fecha con el mes escrito, en formato larto o corto (las tres primeras letras). En concreto las cadenas que aceptaremos son de la forma: dia + separadores + mes + separadores + año. Con separadores nos referimos a lo mismo que en la fecha simple.
                 \item El último caso que vamos a tratar es que podamos ponerle el día de la semana por delante de los otros dos casos, seguido de una posible , y de separadores (. / - o espacio), al menos 1.  
             \end{itemize}
+            El diagrama de la Figura~\ref{fig:diagrama} representa cómo hemos conseguido que el programa identifique formatos de fechas tan variados.
+            \begin{figure}[H]
+                \centering
+                \begin{tikzpicture}
+                    \node[state, initial] (q0) {$q_0$};
+                    \node[state, accepting, below of=q0] (q1) {$q_1$};
+                    \node[state, right of=q0] (q2) {$q_2$};
+                    \node[state, right of=q2] (q3) {$q_3$};
+                    \node[state, below of=q2] (q4) {$q_4$};
+                    \node[state, accepting, below of=q3] (q5) {$q_5$};
+                    \node[state, below of=q4] (q6) {$q_6$};
+                    \node[state, right of=q6] (q7) {$q_7$};
+                    \node[state, below of=q6] (q8) {$q_8$};
+                    \node[state, accepting, right of=q8] (q9) {$q_9$};
+                    \draw (q0) edge[left] node{fecha simple} (q1)
+                        (q0) edge[above] node{día semana} (q2)
+                        (q0) edge[above right] node{día} (q4)
+                        (q2) edge[above] node{separador} (q3)
+                        (q3) edge[above left] node{día} (q4)
+                        (q3) edge[right] node{fecha simple} (q5)
+                        (q4) edge[left] node{separador} (q6)
+                        (q6) edge[above] node{mes} (q7)
+                        (q7) edge[above left] node{separador} (q8)
+                        (q8) edge[above] node{año} (q9);
+                \end{tikzpicture}
+                \caption{Diagrama del reconocedor de fechas.}
+                \label{fig:diagrama}
+            \end{figure}
         \item [Formato estándar.]~\\
             Dada una fecha válida, el formato estándar que hemos escogido es: DD/MM/YYYY\@.
             \begin{ejemplo}
