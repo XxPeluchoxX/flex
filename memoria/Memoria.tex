@@ -66,17 +66,17 @@
     \end{itemize}
 
     \section{Desarrollo de la práctica}
-    En esta práctica los datos que reconoceremos serán los siguientes:
+    Desarrollamos pues un programa que sirva como filtro entre un programa de recopilación de datos (por ejemplo, una página web) y un programa que introduce datos en una base de datos. Como no contamos con ninguno de estos programas, usaremos los ficheros \verb|stdin| y \verb|stdout| como la salida del programa de recopilación y entrada al programa de la base de datos, respectivamente. Los datos que reconoceremos serán los siguientes:
     \begin{itemize}
         \item Nombres y Apellidos.
         \item Teléfonos.
         \item DNIs y NIEs.
         \item Correos electrónicos.
-        \item Cuentas bancarias.
+        \item Cuentas bancarias (números de IBAN de cuentas españolas).
         \item Fechas.
     \end{itemize}
 
-    El funcionamiento del programa es simple: se van introduciendo datos por teclado, y los datos que vaya reconociendo como alguno de los arriba nombrados, se comprobará que sean válidos en algunos casos, y se estandarizarán mostrándolo por pantalla indicando el dato que es. Veamos un sencillo ejemplo: 
+    El funcionamiento del programa es simple: se van introduciendo datos por teclado (uno en cada línea), y los datos que vaya reconociendo el programa como alguno de los arriba nombrados, se comprobará que sean válidos en algunos casos, y se estandarizarán mostrándolo por pantalla indicando el dato que es.
     \begin{ejemplo}
         Veamos un sencillo ejemplo:
         \begin{minted}[numbers=none]{c++}
@@ -86,7 +86,7 @@
             > +34123456789
             Teléfono: +34 | 123456789
         \end{minted}
-        Como vemos cuando lee algo que no encaja en ninguno de los patrones buscados simplemente lo ignora. 
+        Como, vemos cuando lee algo que no encaja en ninguno de los patrones buscados simplemente lo ignora. 
     \end{ejemplo}
 
     Pasemos ahora a explicar los formatos que aceptamos como válidos, pues aunque la idea sea aceptar formatos variados y estandarizarlos, hay ciertas restricciones que vamos a poner; y los formatos estándar para cada tipo de dato. Una restricción común a todos los tipos es que un dato tiene que ir en una misma línea, si se haya un salto de línea se considerará que el dato se ha completado. 
@@ -121,7 +121,7 @@
         \item [Teléfono válido.]~\\
             Consideramos que una palabra es un número de teléfono cuando:
             \begin{itemize}
-                \item Bien está conformada por 9 caracteres numéricos que pueden estar separados por ``.'', ``-'' o un espacio en blanco.
+                \item Bien está conformada por 9 caracteres numéricos que pueden estar separados por ``.'', ``-'', ``/'' o un espacio en blanco.
                 \item Cuenta con un prefijo, es decir, un ``+'' seguido de una cadena numérica formada por 1, 2 o 3 caracteres (que pueden estar o no parentizados) seguido de un número válido (esto es, una palabra de la forma indicada en el punto superior).
             \end{itemize}
         \item [Formato estándar.]~\\
@@ -209,11 +209,11 @@
     \subsection{Cuentas bancarias}
     \begin{description}
         \item [Cadenas válidas.]~\\
-            Diremos que una palabra será una cuenta bancaria válida si está en el formato IBAN para cuentas españolas, que consta de 24 caracteres: 2 letras (``ES'') seguidas de 22 dígitos. Admitiremos también dichas letas en minúscula, espacios entre las letras y los dígitos y entre cada grupo de dígitos, tal y como mostramos debajo:
+            Diremos que una palabra será una cuenta bancaria válida si está en el formato IBAN para cuentas españolas, que consta de 24 caracteres: 2 letras (``ES'') seguidas de 22 dígitos. Admitiremos también dichas letras en minúscula, espacios entre las letras y los dígitos y entre cada grupo de dígitos, tal y como mostramos debajo:
             \begin{equation*}
                 ES\ XX\ XXXX\ XXXX\ XXXX\ XXXX\ XXXX
             \end{equation*}
-            Admitimos que el usuario no introduzca alguno de dichos espacios.
+            Admitimos que el usuario no introduzca alguno de dichos espacios (o que introduzca más de dos espacios seguidos en sitios donde podemos esperar al menos uno).
         \item [Formato estándar.]~\\
             Dada una cuenta bancaria válida, eliminaremos todos los espacios en blanco y convertiremos todos los caracteres a mayúscula.
         \item [Cuentas válidas.]~\\
@@ -223,7 +223,7 @@
             \end{equation*}
             Transformamos las letras a números (de forma que a ``A'' le corresponde el 10, a la ``B'' el 11, \ldots) y el resto de dividir el número que nos queda entre 97 es 1.
             \begin{ejemplo}
-                Mostramos ahora un ejemplo de ejecución, donde vemos que el programa no nos da la salida por ser cuentas no válidas (su resto entre 97 no es 1):
+                Mostramos ahora un ejemplo de ejecución, donde vemos que el programa no nos da la segunda salida por ser una cuenta no válida (su resto entre 97 no es 1):
                 \begin{minted}[numbers=none]{c++}
                     > ES91 2100 0418 4502 0005 1332
                     IBAN: ES9121000418450200051332
@@ -236,7 +236,7 @@
         \item [Fechas válidas.]~\\
             Dado que las fechas se pueden introducir de un montón de formas, en esta práctica vamos a aceptar algunos de ellos que pasaremos a explicar a continuación. Algo que afecta a todas ellas es que el rango de años que vamos a tomar como válidos es desde 1800 hasta 2200.
             \begin{itemize}
-                \item Lo que llamamos fecha simple, púramente numérica. Entre los números que representan el día, mes y año puede haber más de un separador (``. / -'' o espacio) o un de o del. Además aceptamos varios órdenes distintos:
+                \item Lo que llamamos fecha simple, púramente numérica. Entre los números que representan el día, mes y año puede haber más de un separador (``.'', ``/'', ``-'' o espacio) o un ``de'' o ``del''. Además aceptamos varios órdenes distintos:
                     \begin{itemize}
                         \item DD/MM/YYYY (por defecto)
                         \item MM/DD/YYYY
@@ -247,7 +247,7 @@
                     En primer lugar, a lo que nos referimos como por defecto, es que si entre las dos primeras (o las dos últimas) valieran las dos se toma la primera (y la penúltima). Por otro lado, en los casos YY si 20YY es menor o igual al año actual se pone 20YY, en otro caso se pone 19YY. 
 
                 \item La fecha con el mes escrito, en formato larto (ej: febrero, Febrero) o corto (ej: Feb, FEB, feb). En concreto las cadenas que aceptaremos son de la forma: dia + separadores + mes + separadores + año. Con separadores nos referimos a lo mismo que en la fecha simple. También se acepta el año acortado y se siguen las mismas reglas que antes.
-                \item El último caso que vamos a tratar es que podamos ponerle el día de la semana (ej: Miercoles, Miércoles, miercoles, miércoles, x, X) por delante de los otros dos casos, seguido de una posible ``,'' y de separadores (``. / -'' o espacio), al menos 1. Hay que destacar que el programa comprueba que el día de la semana introducido coincide con el día correspondiente a la fecha introducida, sino se descarta. 
+                \item El último caso que vamos a tratar es que podamos ponerle el día de la semana (ej: Miercoles, Miércoles, miercoles, miércoles, x, X) por delante de los otros dos casos, seguido de una posible ``,'' y de separadores (``.'', ``/'', ``-'' o espacio), al menos 1. Hay que destacar que el programa comprueba que el día de la semana introducido coincide con el día correspondiente a la fecha introducida, sino se descarta. 
             \end{itemize}
             El diagrama de la Figura~\ref{fig:diagrama} representa cómo hemos conseguido que el programa identifique formatos de fechas tan variados.
             \begin{figure}[H]
@@ -286,7 +286,7 @@
             \end{itemize}
 
         \item [Formato estándar.]~\\
-            Dada una fecha válida, el formato estándar que hemos escogido es: DD/MM/YYYY\@.
+            Dada una fecha válida, el formato estándar que hemos escogido es:\newline DD/MM/YYYY\@.
             \begin{ejemplo}
                 Un ejemplo de ejecución:
                 \begin{minted}[escapeinside=\#\#, numbers=none]{c++}
@@ -306,6 +306,17 @@
         Cabe destacar que hemos tenido que tener en cuenta algunas prioridades. Por ejemplo cadenas como \verb|999 999 999| son claramente un teléfono pero también puede reconocerse como fecha, que en ningún caso sería válida, tomemos la combinación de espacios que tomemos. Por otro lado tenemos que tener en cuenta que los días de la semana deben reconocerse antes que los nombres también. 
     \end{observacion}
     
+    \section{El programa}
+    Puede encontrar el programa en el archivo \verb|formateador.l|, el cual incluye archivos \verb|.h|, cada uno por cada tipo de cadena que aceptamos en el programa.\\
+
+    Se encuentra disponible un archivo \verb|makefile| para compilar y probar el programa, con las opciones:
+    \begin{itemize}
+        \item \verb|make|, para generar el archivo ejecutable \verb|formateador| (compila con \verb|c++20|, ya que hemos usado una funcionalidad especial para las fechas).
+        \item \verb|make clean|, para eliminar el archivo ejecutable generado.
+        \item \verb|make test|, que ejecutará el archivo ejecutable (que ha de ser previamente generado) con todas las cadenas de prueba que se encuentran en el archivo \verb|prueba.txt|.
+
+            Recomendamos por una parte abrir el archivo y por otra ejecutar \verb|make test|, de forma que por cada cadena de prueba se vea si ha sido aceptada por el programa o si no.
+    \end{itemize}
 
 
     \newpage
